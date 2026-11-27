@@ -1,149 +1,104 @@
-name: Build YuuZPrime Full APK
-
+name: Build YuuZPrime APK
 'on':
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish testing APK to GitHub Releases
+        type: boolean
+        default: false
   push:
     branches: [main, master]
-    tags: ['v*']
-  workflow_dispatch:
-
+    paths:
+      - YuuZPrime-Valora-Full.zip
+      - .github/workflows/build-apk.yml
+      - package.json
+      - package-lock.json
+      - app.config.js
+      - 'src/**'
+      - 'plugins/**'
+      - 'native-src/**'
 permissions:
-  contents: read
-
+  contents: write
 jobs:
-  android:
-    name: Build Android APK
+  build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    permissions:
-      contents: write
+    timeout-minutes: 90
+    env:
+      CI: 'true'
+      EXPO_NO_TELEMETRY: '1'
+      NODE_OPTIONS: --max-old-space-size=4096
+      TMDB_API_KEY: ${{ vars.TMDB_API_KEY }}
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v7
-
-      - name: Extract full YuuZPrime source
+      - name: Extract and verify source
+        id: source
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -f package-lock.json && -f android/settings.gradle ]]; then
-            SOURCE_DIR="$GITHUB_WORKSPACE"
+          if [[ -f package.json && -f app.config.js ]]; then
+            project="$PWD"
+          elif [[ -f YuuZPrime-Valora-Full.zip ]]; then
+            mkdir -p "$RUNNER_TEMP/yuuzprime-src"
+            unzip -q YuuZPrime-Valora-Full.zip -d "$RUNNER_TEMP/yuuzprime-src"
+            project="$RUNNER_TEMP/yuuzprime-src"
           else
-            ARCHIVE="$GITHUB_WORKSPACE/YuuZPrime-Full-Android.zip"
-            if [[ ! -f "$ARCHIVE" ]]; then
-              echo '::error::Upload YuuZPrime-Full-Android.zip to the repository root.'
-              exit 1
-            fi
-            DEST="$RUNNER_TEMP/yuuzprime-full"
-            mkdir -p "$DEST"
-            unzip -q -o "$ARCHIVE" -d "$DEST"
-            SOURCE_DIR=""
-            while IFS= read -r -d '' file; do
-              dir="$(dirname "$file")"
-              if [[ -f "$dir/android/settings.gradle" && -f "$dir/src/App.jsx" ]]; then
-                SOURCE_DIR="$dir"
-                break
-              fi
-            done < <(find "$DEST" -name package-lock.json -type f -print0)
-            if [[ -z "$SOURCE_DIR" ]]; then
-              echo '::error::Full React and Android project not found.'
-              exit 1
-            fi
+            echo '::error::Upload YuuZPrime-Valora-Full.zip in repository root.'
+            exit 1
           fi
-          echo "SOURCE_DIR=$SOURCE_DIR" >> "$GITHUB_ENV"
-          echo "PROJECT_DIR=$SOURCE_DIR/android" >> "$GITHUB_ENV"
-
-      - name: Set up Node.js 22
+          for file in package.json package-lock.json app.config.js src/App.tsx; do
+            test -f "$project/$file" || { echo "::error::Missing $file"; exit 1; }
+          done
+          echo "directory=$project" >> "$GITHUB_OUTPUT"
+      - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '22'
-          package-manager-cache: false
-
-      - name: Build original React UI for Android
-        shell: bash
-        env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
-        run: |
-          set -euo pipefail
-          cd "$SOURCE_DIR"
-          npm ci --no-audit --no-fund
-          npm exec -- vite build --mode android --outDir android/app/src/main/assets --emptyOutDir
-          test -s android/app/src/main/assets/index.html
-          cp LICENSE NOTICE-YuuZPrime.md android/app/src/main/assets/
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Verify project and Android SDK
+      - name: Android SDK
         shell: bash
         run: |
-          cd "$PROJECT_DIR"
-          test -f settings.gradle
-          test -f app/build.gradle
-          test -f app/src/main/AndroidManifest.xml
-          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
-          SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
-          if [[ ! -x "$SDKMANAGER" ]]; then
-            SDKMANAGER="$(command -v sdkmanager)"
-          fi
-          printf 'ANDROID_HOME=%s\nANDROID_SDK_ROOT=%s\n' "$SDK" "$SDK" >> "$GITHUB_ENV"
-          printf 'sdk.dir=%s\n' "$SDK" > local.properties
-          if [[ ! -f "$SDK/platforms/android-35/android.jar" || ! -x "$SDK/build-tools/35.0.0/aapt2" ]]; then
-            (set +o pipefail; yes | "$SDKMANAGER" --sdk_root="$SDK" --licenses >/dev/null)
-            "$SDKMANAGER" --sdk_root="$SDK" 'platforms;android-35' 'build-tools;35.0.0'
-          fi
-          test -f "$SDK/platforms/android-35/android.jar"
-          test -x "$SDK/build-tools/35.0.0/apksigner"
-
-      - name: Set up Gradle 8.9
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '8.9'
-          cache-disabled: true
-
+          set -euo pipefail
+          sdkmanager --install 'platforms;android-36' 'build-tools;36.0.0' 'platform-tools'
+      - name: Install project dependencies
+        working-directory: ${{ steps.source.outputs.directory }}
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Generate Android native project
+        working-directory: ${{ steps.source.outputs.directory }}
+        run: |
+          npm run build:sandbox
+          npx --no-install expo prebuild --platform android --clean --no-install
+          test -f android/gradlew
+          chmod +x android/gradlew
       - name: Build APK
-        shell: bash
-        run: |
-          cd "$PROJECT_DIR"
-          gradle --no-daemon --stacktrace :app:assembleDebug
-
+        working-directory: ${{ steps.source.outputs.directory }}/android
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace -PreactNativeArchitectures=arm64-v8a
       - name: Verify and prepare APK
+        working-directory: ${{ steps.source.outputs.directory }}
         shell: bash
         run: |
-          mkdir -p dist
-          cp "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk" dist/YuuZPrime.apk
-          test -s dist/YuuZPrime.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose dist/YuuZPrime.apk
-
-      - name: Upload APK artifact
+          set -euo pipefail
+          apk=$(find android/app/build/outputs/apk/release -type f -name '*.apk' ! -name '*unsigned*' | head -n 1)
+          test -n "$apk" && test -s "$apk"
+          mkdir -p "$GITHUB_WORKSPACE/apk-output"
+          cp "$apk" "$GITHUB_WORKSPACE/apk-output/YuuZPrime.apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$GITHUB_WORKSPACE/apk-output/YuuZPrime.apk"
+      - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
-          name: YuuZPrime-APK
-          path: dist/YuuZPrime.apk
+          path: apk-output/YuuZPrime.apk
+          archive: false
           if-no-files-found: error
-          retention-days: 14
-
-      - name: Publish optional GitHub Release
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
-        shell: bash
+      - name: Publish optional testing release
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_release
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            TAG="$GITHUB_REF_NAME"
-          else
-            TAG="android-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          fi
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            if gh release upload "$TAG" dist/YuuZPrime.apk --clobber; then
-              echo 'APK published to existing Release.'
-            else
-              echo '::warning::Release upload failed. APK is available in Actions Artifacts.'
-            fi
-          elif gh release create "$TAG" dist/YuuZPrime.apk --target "$GITHUB_SHA" --title "YuuZPrime Android $TAG" --notes 'Debug APK for testing. Source and license are in the repository.'; then
-            echo 'APK published to new Release.'
-          else
-            echo '::warning::Release creation failed. APK is available in Actions Artifacts.'
-          fi
+          gh release create "build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" apk-output/YuuZPrime.apk --title "YuuZPrime test build ${GITHUB_RUN_NUMBER}" --notes 'Testing APK; not production signed.' --prerelease
           
