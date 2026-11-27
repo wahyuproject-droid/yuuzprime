@@ -59,11 +59,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+          log-accepted-android-sdk-licenses: 'false'
+      - name: Verify Android SDK
         shell: bash
         run: |
           set -euo pipefail
-          sdkmanager --install 'platforms;android-36' 'build-tools;36.0.0' 'platform-tools'
+          sdkmanager --version
+          test -f "$ANDROID_HOME/platforms/android-36/android.jar"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
       - name: Install project dependencies
         working-directory: ${{ steps.source.outputs.directory }}
         run: npm ci --legacy-peer-deps --no-audit --no-fund
@@ -74,6 +81,22 @@ jobs:
           npx --no-install expo prebuild --platform android --clean --no-install
           test -f android/gradlew
           chmod +x android/gradlew
+      - name: Prepare testing signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.android"
+          key="$HOME/.android/yuuzprime-test.keystore"
+          keytool -genkeypair -noprompt -keystore "$key" -storetype JKS \
+            -storepass android -keypass android -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname 'CN=YuuZPrime Test, O=Development, C=US'
+          {
+            echo "MYAPP_UPLOAD_STORE_FILE=$key"
+            echo 'MYAPP_UPLOAD_STORE_PASSWORD=android'
+            echo 'MYAPP_UPLOAD_KEY_ALIAS=androiddebugkey'
+            echo 'MYAPP_UPLOAD_KEY_PASSWORD=android'
+          } >> "$GITHUB_ENV"
       - name: Build APK
         working-directory: ${{ steps.source.outputs.directory }}/android
         run: ./gradlew :app:assembleRelease --no-daemon --stacktrace -PreactNativeArchitectures=arm64-v8a
@@ -82,7 +105,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          apk=$(find android/app/build/outputs/apk/release -type f -name '*.apk' ! -name '*unsigned*' | head -n 1)
+          apk=$(find android/app/build/outputs/apk/release -type f -name '*.apk' ! -name '*unsigned*' -print -quit)
           test -n "$apk" && test -s "$apk"
           mkdir -p "$GITHUB_WORKSPACE/apk-output"
           cp "$apk" "$GITHUB_WORKSPACE/apk-output/YuuZPrime.apk"
@@ -101,4 +124,3 @@ jobs:
         shell: bash
         run: |
           gh release create "build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" apk-output/YuuZPrime.apk --title "YuuZPrime test build ${GITHUB_RUN_NUMBER}" --notes 'Testing APK; not production signed.' --prerelease
-          
