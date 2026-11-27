@@ -20,6 +20,43 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v7
 
+      - name: Extract Android source ZIP automatically
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f settings.gradle && -f app/build.gradle ]]; then
+            PROJECT_DIR="$GITHUB_WORKSPACE"
+          else
+            ARCHIVE=""
+            for candidate in YuuZPrime-Android-GitHub-FIX.zip YuuZPrime-Android-GitHub.zip; do
+              if [[ -f "$candidate" ]]; then
+                ARCHIVE="$candidate"
+                break
+              fi
+            done
+            if [[ -z "$ARCHIVE" ]]; then
+              echo '::error::Upload the Android source ZIP or extracted Android project.'
+              exit 1
+            fi
+            DEST="$RUNNER_TEMP/yuuzprime-source"
+            mkdir -p "$DEST"
+            unzip -q -o "$ARCHIVE" -d "$DEST"
+            PROJECT_DIR=""
+            while IFS= read -r -d '' file; do
+              dir="$(dirname "$file")"
+              if [[ -f "$dir/app/build.gradle" ]]; then
+                PROJECT_DIR="$dir"
+                break
+              fi
+            done < <(find "$DEST" -name settings.gradle -type f -print0)
+            if [[ -z "$PROJECT_DIR" ]]; then
+              echo '::error::ZIP does not contain a valid Android Gradle project.'
+              exit 1
+            fi
+          fi
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Android project: $PROJECT_DIR"
+
       - name: Set up Java 17
         uses: actions/setup-java@v6
         with:
@@ -29,6 +66,7 @@ jobs:
       - name: Verify project and Android SDK
         shell: bash
         run: |
+          cd "$PROJECT_DIR"
           test -f settings.gradle
           test -f app/build.gradle
           test -f app/src/main/AndroidManifest.xml
@@ -54,13 +92,15 @@ jobs:
 
       - name: Build APK
         shell: bash
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+        run: |
+          cd "$PROJECT_DIR"
+          gradle --no-daemon --stacktrace :app:assembleDebug
 
       - name: Verify and prepare APK
         shell: bash
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk dist/YuuZPrime.apk
+          cp "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk" dist/YuuZPrime.apk
           test -s dist/YuuZPrime.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose dist/YuuZPrime.apk
 
@@ -94,4 +134,3 @@ jobs:
           else
             echo '::warning::Release creation failed. APK is available in Actions Artifacts.'
           fi
-          
