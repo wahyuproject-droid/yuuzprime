@@ -1,4 +1,4 @@
-name: Build YuuZPrime APK
+name: Build YuuZPrime Full APK
 
 'on':
   push:
@@ -13,49 +13,61 @@ jobs:
   android:
     name: Build Android APK
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
       - name: Checkout source
         uses: actions/checkout@v7
 
-      - name: Extract Android source ZIP automatically
+      - name: Extract full YuuZPrime source
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -f settings.gradle && -f app/build.gradle ]]; then
-            PROJECT_DIR="$GITHUB_WORKSPACE"
+          if [[ -f package-lock.json && -f android/settings.gradle ]]; then
+            SOURCE_DIR="$GITHUB_WORKSPACE"
           else
-            ARCHIVE=""
-            for candidate in YuuZPrime-Android-GitHub-FIX.zip YuuZPrime-Android-GitHub.zip; do
-              if [[ -f "$candidate" ]]; then
-                ARCHIVE="$candidate"
-                break
-              fi
-            done
-            if [[ -z "$ARCHIVE" ]]; then
-              echo '::error::Upload the Android source ZIP or extracted Android project.'
+            ARCHIVE="$GITHUB_WORKSPACE/YuuZPrime-Full-Android.zip"
+            if [[ ! -f "$ARCHIVE" ]]; then
+              echo '::error::Upload YuuZPrime-Full-Android.zip to the repository root.'
               exit 1
             fi
-            DEST="$RUNNER_TEMP/yuuzprime-source"
+            DEST="$RUNNER_TEMP/yuuzprime-full"
             mkdir -p "$DEST"
             unzip -q -o "$ARCHIVE" -d "$DEST"
-            PROJECT_DIR=""
+            SOURCE_DIR=""
             while IFS= read -r -d '' file; do
               dir="$(dirname "$file")"
-              if [[ -f "$dir/app/build.gradle" ]]; then
-                PROJECT_DIR="$dir"
+              if [[ -f "$dir/android/settings.gradle" && -f "$dir/src/App.jsx" ]]; then
+                SOURCE_DIR="$dir"
                 break
               fi
-            done < <(find "$DEST" -name settings.gradle -type f -print0)
-            if [[ -z "$PROJECT_DIR" ]]; then
-              echo '::error::ZIP does not contain a valid Android Gradle project.'
+            done < <(find "$DEST" -name package-lock.json -type f -print0)
+            if [[ -z "$SOURCE_DIR" ]]; then
+              echo '::error::Full React and Android project not found.'
               exit 1
             fi
           fi
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Android project: $PROJECT_DIR"
+          echo "SOURCE_DIR=$SOURCE_DIR" >> "$GITHUB_ENV"
+          echo "PROJECT_DIR=$SOURCE_DIR/android" >> "$GITHUB_ENV"
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Build original React UI for Android
+        shell: bash
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_DIR"
+          npm ci --no-audit --no-fund
+          npm exec -- vite build --mode android --outDir android/app/src/main/assets --emptyOutDir
+          test -s android/app/src/main/assets/index.html
+          cp LICENSE NOTICE-YuuZPrime.md android/app/src/main/assets/
 
       - name: Set up Java 17
         uses: actions/setup-java@v6
@@ -134,3 +146,4 @@ jobs:
           else
             echo '::warning::Release creation failed. APK is available in Actions Artifacts.'
           fi
+          
