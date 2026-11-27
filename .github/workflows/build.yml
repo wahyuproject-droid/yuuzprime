@@ -81,6 +81,10 @@ jobs:
           for (const plugin of ['with-android-signing.js', 'with-android-release-gradle.js']) {
             text = text.replace(`    './plugins/${plugin}',\n`, '');
           }
+          // Pin the Cast SDK in the Expo plugin before generating Android files.
+          const castOption = 'expandedController: true,';
+          if (!text.includes(castOption)) throw new Error('Cast plugin configuration not found');
+          text = text.replace(castOption, castOption + '\n        androidPlayServicesCastFrameworkVersion: \'22.1.0\',');
           fs.writeFileSync(file, text);
           NODE
           npm run build:sandbox
@@ -102,7 +106,7 @@ jobs:
           df -h .
           free -h
 
-      - name: Fix MediaRouter compatibility (SDK 36 / AGP 8.12)
+      - name: Pin Cast and MediaRouter (Kotlin 2.1 / SDK 36)
         working-directory: ${{ steps.source.outputs.directory }}/android
         shell: bash
         run: |
@@ -110,21 +114,28 @@ jobs:
           test -f build.gradle
           cat >> build.gradle <<'GRADLE'
 
-          // YuuZPrime: avoid the SDK 37 / AGP 9.1 requirement of MediaRouter 1.9 beta.
+          // Keep Cast on the Kotlin 2.x-compatible version documented by react-native-google-cast.
+          // Override transitive/dynamic requests for both Cast modules and MediaRouter.
           allprojects {
               configurations.configureEach {
-                  resolutionStrategy.force('androidx.mediarouter:mediarouter:1.8.1')
+                  resolutionStrategy.force(
+                      'androidx.mediarouter:mediarouter:1.8.1',
+                      'com.google.android.gms:play-services-cast:22.1.0',
+                      'com.google.android.gms:play-services-cast-framework:22.1.0'
+                  )
               }
           }
           GRADLE
-          echo 'Pinned androidx.mediarouter:mediarouter:1.8.1'
+          echo 'Pinned MediaRouter 1.8.1 and Google Cast 22.1.0'
 
       - name: Check Android dependency compatibility before full build
         working-directory: ${{ steps.source.outputs.directory }}/android
         shell: bash
         run: |
           set -euo pipefail
-          ./gradlew :app:dependencyInsight --dependency androidx.mediarouter:mediarouter --configuration releaseRuntimeClasspath :app:checkReleaseAarMetadata --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee "$RUNNER_TEMP/yuuzprime-gradle.log"
+          ./gradlew :app:dependencyInsight --dependency play-services-cast-framework --configuration releaseCompileClasspath --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee "$RUNNER_TEMP/yuuzprime-gradle.log"
+          grep -Eq 'com.google.android.gms:play-services-cast-framework:22\.1\.0([[:space:]]|$)' "$RUNNER_TEMP/yuuzprime-gradle.log" || { echo '::error::Expected Cast SDK 22.1.0 not resolved'; exit 1; }
+          ./gradlew :app:dependencyInsight --dependency androidx.mediarouter:mediarouter --configuration releaseRuntimeClasspath :app:checkReleaseAarMetadata --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee -a "$RUNNER_TEMP/yuuzprime-gradle.log"
 
       - name: Build standalone release APK
         working-directory: ${{ steps.source.outputs.directory }}/android
