@@ -102,12 +102,36 @@ jobs:
           df -h .
           free -h
 
+      - name: Fix MediaRouter compatibility (SDK 36 / AGP 8.12)
+        working-directory: ${{ steps.source.outputs.directory }}/android
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f build.gradle
+          cat >> build.gradle <<'GRADLE'
+
+          // YuuZPrime: avoid the SDK 37 / AGP 9.1 requirement of MediaRouter 1.9 beta.
+          allprojects {
+              configurations.configureEach {
+                  resolutionStrategy.force('androidx.mediarouter:mediarouter:1.8.1')
+              }
+          }
+          GRADLE
+          echo 'Pinned androidx.mediarouter:mediarouter:1.8.1'
+
+      - name: Check Android dependency compatibility before full build
+        working-directory: ${{ steps.source.outputs.directory }}/android
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew :app:dependencyInsight --dependency androidx.mediarouter:mediarouter --configuration releaseRuntimeClasspath :app:checkReleaseAarMetadata --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee "$RUNNER_TEMP/yuuzprime-gradle.log"
+
       - name: Build standalone release APK
         working-directory: ${{ steps.source.outputs.directory }}/android
         shell: bash
         run: |
           set -euo pipefail
-          ./gradlew :app:assembleRelease --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee "$RUNNER_TEMP/yuuzprime-gradle.log"
+          ./gradlew :app:assembleRelease --no-daemon --max-workers=2 --console=plain -PreactNativeArchitectures=arm64-v8a 2>&1 | tee -a "$RUNNER_TEMP/yuuzprime-gradle.log"
 
       - name: Verify and prepare APK
         working-directory: ${{ steps.source.outputs.directory }}
@@ -158,3 +182,4 @@ jobs:
           name: YuuZPrime-build-log
           path: ${{ runner.temp }}/yuuzprime-gradle.log
           if-no-files-found: ignore
+          
