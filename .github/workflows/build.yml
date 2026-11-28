@@ -24,27 +24,54 @@ concurrency:
 jobs:
   upgrade-source:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     permissions:
       contents: write
     outputs:
       ref: ${{ steps.upgrade.outputs.ref }}
     steps:
       - uses: actions/checkout@v7
-      - name: Update verified 1.0.4 archive to 1.0.5
+      - name: Replace ZIP-only repository with full source
         id: upgrade
         shell: bash
         run: |
           set -euo pipefail
           archive=YuuZPrime-Valora-Full.zip
-          if [[ -f "$archive" ]] && [[ "$(git hash-object "$archive")" == "a4cfab8019e3b224ac59b6a77217ffd8bc10a638" ]]; then
-            python3 .github/upgrade-yuuzprime.py "$archive"
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -- "$archive"
-            git commit -m "Update YuuZPrime source archive to v1.0.5"
-            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
-          fi
+          test "$(git hash-object "$archive")" = "80c0d30db9aeec71bfdd29192ce773a2c66b5d18"
+          python3 <<'PY'
+          from pathlib import Path, PurePosixPath
+          import zipfile, hashlib
+          archive = Path('YuuZPrime-Valora-Full.zip')
+          with zipfile.ZipFile(archive) as z:
+              names = [n for n in z.namelist() if not n.endswith('/')]
+              assert len(names) == len(set(names)) == 293
+              assert z.testzip() is None
+              manifest = hashlib.sha256(''.join(f'{n}\t{hashlib.sha256(z.read(n)).hexdigest()}\n' for n in sorted(names)).encode()).hexdigest()
+              assert manifest == '1919c7c95d0ab1858105db39c39eaf46911aeb8dc298f007c8fe6d3566251f6e'
+              for n in names:
+                  p = PurePosixPath(n)
+                  assert not p.is_absolute() and '..' not in p.parts and '.git' not in p.parts and '\\' not in n
+                  dest = Path(n)
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  dest.write_bytes(z.read(n))
+          readme = Path('README.md')
+          s = readme.read_text()
+          start = s.index('1. Upload ')
+          end = s.index('\n\nNo full Android build', start)
+          s = s[:start] + '''1. The complete source is already extracted in this repository.
+          2. Open Actions > Build YuuZPrime APK > Run workflow.
+          3. Download YuuZPrime-APK from the successful run's Artifacts.
+          The workflow uses locked dependencies and pins Google Cast 22.1.0 and MediaRouter 1.8.1.''' + s[end:]
+          readme.write_text(s)
+          print('Verified and extracted 293 files; updated README for source repository.')
+          PY
+          git rm -- YuuZPrime-Valora-Full.zip .github/upgrade-yuuzprime.py .github/workflows/build.yml
+          git add -f -- .
+          test "$(git ls-files | wc -l)" -eq 293
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Replace archive with complete branded YuuZPrime source'
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
           echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build:
     needs: upgrade-source
