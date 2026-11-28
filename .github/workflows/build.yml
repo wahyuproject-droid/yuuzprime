@@ -6,6 +6,12 @@ on:
     branches: [main, master]
     paths:
       - 'YuuZPrime-Valora-Full.zip'
+      - 'app.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/**'
+      - 'assets/**'
+      - 'plugins/**'
       - '.github/workflows/**'
 
 permissions:
@@ -16,7 +22,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  upgrade-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      ref: ${{ steps.upgrade.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Update verified 1.0.4 archive to 1.0.5
+        id: upgrade
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive=YuuZPrime-Valora-Full.zip
+          if [[ -f "$archive" ]] && [[ "$(git hash-object "$archive")" == "a4cfab8019e3b224ac59b6a77217ffd8bc10a638" ]]; then
+            python3 .github/upgrade-yuuzprime.py "$archive"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- "$archive"
+            git commit -m "Update YuuZPrime source archive to v1.0.5"
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
+          fi
+          echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build:
+    needs: upgrade-source
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
@@ -28,6 +59,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.upgrade-source.outputs.ref }}
+          persist-credentials: false
 
       - name: Extract original source
         id: source
@@ -39,11 +73,20 @@ jobs:
           else
             project="$RUNNER_TEMP/yuuzprime-src"
             mkdir -p "$project"
-            unzip -q "$GITHUB_WORKSPACE/YuuZPrime-Valora-Full.zip" -d "$project"
+            archive="$GITHUB_WORKSPACE/YuuZPrime-Valora-Full.zip"
+            test -f "$archive" || { echo '::error::Upload YuuZPrime-Valora-Full.zip at repository root'; exit 1; }
+            unzip -tq "$archive"
+            unzip -q "$archive" -d "$project"
+            if [[ ! -f "$project/package.json" ]]; then
+              mapfile -t candidates < <(find "$project" -maxdepth 3 -name app.config.js -type f)
+              if [[ ${#candidates[@]} -ne 1 ]]; then echo '::error::Cannot uniquely locate Expo project'; exit 1; fi
+              project="$(dirname "${candidates[0]}")"
+            fi
           fi
           for f in package.json package-lock.json app.config.js src/App.tsx debug.keystore; do
             test -f "$project/$f" || { echo "::error::Missing $f"; exit 1; }
           done
+          echo "Source file count: $(find "$project" -type f | wc -l)"
           echo "directory=$project" >> "$GITHUB_OUTPUT"
 
       - name: Node.js 22
@@ -193,4 +236,3 @@ jobs:
           name: YuuZPrime-build-log
           path: ${{ runner.temp }}/yuuzprime-gradle.log
           if-no-files-found: ignore
-          
