@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YuuZPrime — Streaming Sinematik Tanpa Iklan.</title>
+  <meta name="description" content="Aplikasi streaming film dan serial Android open-source bebas iklan dengan arsitektur ARM64-v8a native, dukungan 4K HDR, multi-audio, dan pemutar eksternal.">
+  <meta name="theme-color" content="#141414">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="YuuZPrime — Streaming Sinematik Tanpa Iklan.">
+  <meta property="og:description" content="Nonton dan unduh film serta serial bebas iklan dengan visual memukau, pemutar 4K HDR, dan arsitektur 64-bit native.">
+  <meta property="og:image" content="assets/logo.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Nav Pill -->
+  <header class="nav-container">
+    <nav class="nav-pill" id="navbar">
+      <a href="#" class="brand-lockup">
+        <img src="assets/icon.png" alt="YuuZPrime Icon" class="brand-squircle">
+        <span class="brand-title">YuuZPrime</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#fitur" class="nav-link">Fitur Utama</a>
+        <a href="#arsitektur" class="nav-link">Arsitektur</a>
+        <a href="#spesifikasi" class="nav-link">Spesifikasi</a>
+        <a href="#perbandingan" class="nav-link">Bandingkan</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </div>
+
+      <div class="nav-actions">
+        <a href="https://github.com/B7ByteMe/valorafilm" target="_blank" rel="noopener" class="button-pill-soft nav-git-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://github.com/B7ByteMe/valorafilm/releases/download/v1.0.3/YuuZPrime-arm64-v8a-v1.0.3.apk" class="button-primary nav-download-btn">
+          <span>Unduh APK</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </a>
+        <button class="mobile-toggle" id="mobileMenuToggle" aria-label="Menu navigasi">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-content">
+      <a href="#fitur" class="mobile-drawer-link">Fitur Utama</a>
+      <a href="#arsitektur" class="mobile-drawer-link">Arsitektur</a>
+      <a href="#spesifikasi" class="mobile-drawer-link">Spesifikasi</a>
+      <a href="#perbandingan" class="mobile-drawer-link">Bandingkan</a>
+      <a href="#faq" class="mobile-drawer-link">FAQ</a>
+      <div class="mobile-drawer-actions">
+        <a href="https://github.com/B7ByteMe/valorafilm" target="_blank" rel="noopener" class="button-outline">GitHub Repository ↗</a>
+        <a href="https://github.com/B7ByteMe/valorafilm/releases/download/v1.0.3/YuuZPrime-arm64-v8a-v1.0.3.apk" class="button-primary">Unduh APK v1.0.3</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="container hero-content">
+        <!-- Commercial accent badge -->
+        <div class="hero-eyebrow">
+          <span class="badge-popular">TERBARU v1.0.3</span>
+          <span class="hero-eyebrow-text">
+            <span class="text-desktop">Kompilasi ARM64-v8a Native · Open Source</span>
+            <span class="text-mobile">ARM64-v8a · Open Source</span>
+          </span>
+        </div>
+
+        <h1 class="hero-title">Streaming film dan serial tanpa gangguan iklan.</h1>
+        
+        <p class="hero-subtitle">
+          Aplikasi Android native yang dirancang khusus untuk pemutaran sinematik berkecepatan tinggi. Nikmati resolusi 4K HDR, multi-audio, subtitle eksternal, dan buffer instan 800ms tanpa pelacak.
+        </p>
+
+        <div class="hero-actions">
+          <a href="https://github.com/B7ByteMe/valorafilm/releases/download/v1.0.3/YuuZPrime-arm64-v8a-v1.0.3.apk" class="button-primary hero-btn-main">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Unduh APK v1.0.3 (ARM64)</span>
+          </a>
+          <a href="https://github.com/B7ByteMe/valorafilm" target="_blank" rel="noopener" class="button-outline hero-btn-sub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span>Source Code di GitHub ↗</span>
+          </a>
+        </div>
+
+        <!-- Release metadata pills -->
+        <div class="hero-meta-row">
+          <span class="meta-pill">Android 9.0+</span>
+          <span class="meta-pill">ARM64-v8a (64-bit)</span>
+          <span class="meta-pill">Ukuran ~28 MB</span>
+          <span class="meta-pill">Lisensi Bebas Iklan</span>
+        </div>
+
+
+      </div>
+    </section>
+
+    <!-- FULL-BLEED SQUIRCLE MARQUEE -->
+    <section class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <span>4K Ultra HD</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <span>HLS Adaptive Stream</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <span>Ad-Free Architecture</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <span>Multi-Language Audio</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+            </div>
+            <span>External Subtitles (.SRT/.VTT)</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <span>Desktop Watchlist Sync</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            </div>
+            <span>ARM64-v8a Native Engine</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </div>
+            <span>In-App APK Updater</span>
+          </div>
+        </div>
+        <!-- Duplicate for infinite seamless scroll -->
+        <div class="marquee-content" aria-hidden="true">
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <span>4K Ultra HD</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <span>HLS Adaptive Stream</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <span>Ad-Free Architecture</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <span>Multi-Language Audio</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+            </div>
+            <span>External Subtitles (.SRT/.VTT)</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <span>Desktop Watchlist Sync</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            </div>
+            <span>ARM64-v8a Native Engine</span>
+          </div>
+          <div class="brand-chip">
+            <div class="app-icon-squircle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </div>
+            <span>In-App APK Updater</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICS STRIP -->
+    <section class="metrics-section">
+      <div class="container">
+        <div class="metrics-card">
+          <div class="metric-item">
+            <div class="metric-number">0</div>
+            <div class="metric-label">Iklan atau banner promosi mengganggu.</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-number">800<span class="metric-unit">ms</span></div>
+            <div class="metric-label">Latensi awal buffer video adaptif.</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-number">64<span class="metric-unit">bit</span></div>
+            <div class="metric-label">Target biner murni ARM64-v8a.</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-number">100<span class="metric-unit">%</span></div>
+            <div class="metric-label">Kode sumber terbuka di GitHub.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE FEATURES SECTION -->
+    <section class="section" id="fitur">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">FITUR ESENSIAL</span>
+          <h2 class="section-title">Semua keunggulan pemutar modern, tanpa kompromi.</h2>
+          <p class="section-desc">Dirancang dari nol dengan fokus pada kesederhanaan, kecepatan, dan kenyamanan menonton tanpa interupsi.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1: Featured Tint Card -->
+          <div class="feature-card featured">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <h3 class="feature-title">Streaming & Download Bebas Iklan.</h3>
+            <p class="feature-body">
+              Tanpa iklan pop-up, tanpa redirect tautan, dan tanpa jeda sponsor. Tonton langsung secara daring atau unduh episode favorit Anda untuk ditonton secara luring kapan saja.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">Zero Popups</span>
+              <span class="badge-overlay-dark">Offline Mode</span>
+            </div>
+          </div>
+
+          <!-- Feature 2: Clean Hairline Card -->
+          <div class="feature-card">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3 class="feature-title">Startup Buffer Kilat 800ms.</h3>
+            <p class="feature-body">
+              Dilengkapi algoritma caching lokal dan optimasi ExoPlayer pipeline sehingga pemutaran dimulai seketika tanpa putaran loading panjang.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">Adaptive HLS</span>
+              <span class="badge-overlay-dark">Low Latency</span>
+            </div>
+          </div>
+
+          <!-- Feature 3: Clean Hairline Card -->
+          <div class="feature-card">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+            </div>
+            <h3 class="feature-title">Multi Audio & Subtitle Eksternal.</h3>
+            <p class="feature-body">
+              Sesuaikan trek audio sesuai bahasa pilihan Anda dan muat file subtitle eksternal (.srt atau .vtt) dengan pengaturan offset waktu milidetik yang presisi.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">Sinkronisasi Waktu</span>
+              <span class="badge-overlay-dark">Kustomisasi Font</span>
+            </div>
+          </div>
+
+          <!-- Feature 4: Clean Hairline Card -->
+          <div class="feature-card">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <h3 class="feature-title">Sinkronisasi Watchlist ke Desktop.</h3>
+            <p class="feature-body">
+              Daftar tontonan dan progres durasi tayangan Anda tersinkronisasi mulus antara perangkat Android dan aplikasi pendamping desktop.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">Cloud Watchlist</span>
+              <span class="badge-overlay-dark">Cross-Device</span>
+            </div>
+          </div>
+
+          <!-- Feature 5: Clean Hairline Card -->
+          <div class="feature-card">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </div>
+            <h3 class="feature-title">Pemutar & Downloader Eksternal.</h3>
+            <p class="feature-body">
+              Lebih suka memutar lewat VLC, MPV, atau Nova Player? Cukup satu ketukan untuk meneruskan tautan stream ke pemutar pilihan Anda di Android.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">VLC Support</span>
+              <span class="badge-overlay-dark">MPV / Nova</span>
+            </div>
+          </div>
+
+          <!-- Feature 6: Featured Tint Card -->
+          <div class="feature-card featured">
+            <div class="feature-icon-squircle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </div>
+            <h3 class="feature-title">In-App APK Updater Otomatis.</h3>
+            <p class="feature-body">
+              Pemberitahuan pembaruan versi baru terintegrasi langsung di aplikasi dengan indikator persentase unduhan waktu-nyata tanpa perlu mengunjungi browser.
+            </p>
+            <div class="feature-pill-row">
+              <span class="badge-overlay-dark">Live Progress</span>
+              <span class="badge-overlay-dark">One-Click Install</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE ARCHITECTURE & PLAYBACK SHOWCASE -->
+    <section class="section bg-soft-section" id="arsitektur">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">TEKNOLOGI & ARSITEKTUR</span>
+          <h2 class="section-title">Dibangun untuk keandalan dan performa tinggi.</h2>
+          <p class="section-desc">Pilih modul di bawah ini untuk melihat detail arsitektur teknis dan pipeline pemutaran internal YuuZPrime.</p>
+        </div>
+
+        <!-- Segmented Control as defined in design system -->
+        <div class="segmented-control-container">
+          <div class="segmented-control" role="tablist">
+            <button class="segmented-option active" id="tab-engine" role="tab" aria-selected="true" onclick="switchTab('engine')">
+              <span class="tab-text-desktop">Mesin Pemutar HLS</span>
+              <span class="tab-text-mobile">Mesin HLS</span>
+            </button>
+            <button class="segmented-option" id="tab-arm64" role="tab" aria-selected="false" onclick="switchTab('arm64')">
+              <span class="tab-text-desktop">Native ARM64-v8a</span>
+              <span class="tab-text-mobile">ARM64-v8a</span>
+            </button>
+            <button class="segmented-option" id="tab-ext" role="tab" aria-selected="false" onclick="switchTab('ext')">
+              <span class="tab-text-desktop">Subtitle & Provider</span>
+              <span class="tab-text-mobile">Subtitle</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-panel active" id="panel-engine">
+          <div class="showcase-card">
+            <div class="showcase-info">
+              <div class="badge-popular">PIPELINE OPTIMASI</div>
+              <h3 class="showcase-heading">Pemutaran adaptif tanpa lag dengan disk cache mandiri.</h3>
+              <p class="showcase-text">
+                YuuZPrime memanfaatkan arsitektur streaming HLS dengan initial pre-buffer 800ms. Sistem membaca segmen chunk secara asinkron sehingga transisi resolusi terjadi tanpa freeze atau audio desync.
+              </p>
+              <ul class="spec-bullet-list">
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Buffer awal teroptimasi: 800ms (Standar industri: 3000ms+)</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Mode Caching: Force-Cache Native Disk</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Dukungan Video: H.264, HEVC (H.265), VP9, AV1</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Dekoder Audio: AAC, AC-3, E-AC-3, Opus</li>
+              </ul>
+            </div>
+            <div class="showcase-codebox">
+              <div class="codebox-header">
+                <span class="codebox-title">player-engine-config.json</span>
+                <span class="badge-overlay-dark">HLS_V2</span>
+              </div>
+              <pre class="codebox-body"><code>{
+  "engine": "NativeMediaPipeline",
+  "buffer": {
+    "initialPlaybackBufferMs": 800,
+    "minBufferMs": 5000,
+    "maxBufferMs": 30000,
+    "bufferForPlaybackAfterRebufferMs": 2000
+  },
+  "cachingStrategy": "DIRECT_DISK_FORCE_CACHE",
+  "hardwareAcceleration": true,
+  "zeroTrackers": true
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-arm64">
+          <div class="showcase-card">
+            <div class="showcase-info">
+              <div class="badge-popular">64-BIT SOLE TARGET</div>
+              <h3 class="showcase-heading">Dikeluarkan khusus untuk efisiensi CPU modern.</h3>
+              <p class="showcase-text">
+                Dengan meninggalkan overhead kompatibilitas 32-bit usang, YuuZPrime mengkompilasi instruksi register 64-bit langsung ke chipset smartphone Android masa kini. Penggunaan baterai lebih hemat dan rendering UI stabil 60–120 FPS.
+              </p>
+              <ul class="spec-bullet-list">
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> ABI Target: ARM64-v8a (64-Bit murni)</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Kompatibilitas OS: Android 9.0 (Pie) hingga Android 15</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Konsumsi RAM saat memutar: ~85 MB hingga 140 MB</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Ukuran instalasi paket: Hanya ~28 MB</li>
+              </ul>
+            </div>
+            <div class="showcase-codebox">
+              <div class="codebox-header">
+                <span class="codebox-title">build.gradle.kts (Native target)</span>
+                <span class="badge-overlay-dark">ARM64</span>
+              </div>
+              <pre class="codebox-body"><code>ndk {
+    abiFilters.clear()
+    abiFilters.add("arm64-v8a")
+}
+
+packagingOptions {
+    resources.excludes += "**/32bit_legacy/**"
+    jniLibs.useLegacyPackaging = false
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-ext">
+          <div class="showcase-card">
+            <div class="showcase-info">
+              <div class="badge-popular">FLEKSIBILITAS LENGKAP</div>
+              <h3 class="showcase-heading">Subtitle kustom dan integrasi provider modular.</h3>
+              <p class="showcase-text">
+                Tidak lagi terkunci pada satu format subtitle atau satu penyedia. YuuZPrime memungkinkan Anda mengimpor file subtitle lokal (.srt, .vtt, .ass), mengatur ukuran font, warna latar, dan penundaan waktu per milidetik.
+              </p>
+              <ul class="spec-bullet-list">
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Format Subtitle: SubRip (.srt), WebVTT (.vtt), ASS/SSA</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Pengaturan Waktu: Mundurkan/Majukan dalam rentang 100ms</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Dukungan Sumber Kustom: Integrasi API Provider mandiri</li>
+                <li><span class="bullet-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span> Ekspor/Impor Bookmark dan Watchlist via JSON</li>
+              </ul>
+            </div>
+            <div class="showcase-codebox">
+              <div class="codebox-header">
+                <span class="codebox-title">custom-provider-sample.js</span>
+                <span class="badge-overlay-dark">MODULAR</span>
+              </div>
+              <pre class="codebox-body"><code>export async function resolveStream(movieId) {
+  const sources = await fetchMeta(movieId);
+  return {
+    streams: sources.map(s => ({
+      quality: s.res, // "1080p", "4K"
+      url: s.m3u8Url,
+      subtitles: s.tracks
+    }))
+  };
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TECHNICAL SPECS CARD GRID -->
+    <section class="section" id="spesifikasi">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">RINCIAN RILIS</span>
+          <h2 class="section-title">Spesifikasi teknis rilis v1.0.3 resmi.</h2>
+          <p class="section-desc">Informasi lengkap paket unduhan, persyaratan sistem, dan status integritas berkas.</p>
+        </div>
+
+        <div class="specs-card-grid">
+          <div class="spec-box">
+            <span class="spec-key">Versi Rilis</span>
+            <span class="spec-val">v1.0.3 (Build 193)</span>
+          </div>
+          <div class="spec-box">
+            <span class="spec-key">Arsitektur Target</span>
+            <span class="spec-val"><span class="badge-popular">ARM64-v8a</span></span>
+          </div>
+          <div class="spec-box">
+            <span class="spec-key">Minimal Versi Android</span>
+            <span class="spec-val">Android 9.0 (API Level 28+)</span>
+          </div>
+          <div class="spec-box">
+            <span class="spec-key">Ukuran Berkas APK</span>
+            <span class="spec-val">~28.4 MB</span>
+          </div>
+          <div class="spec-box">
+            <span class="spec-key">Nama Berkas Paket</span>
+            <span class="spec-val"><code>YuuZPrime-arm64-v8a-v1.0.3.apk</code></span>
+          </div>
+          <div class="spec-box">
+            <span class="spec-key">Lisensi & Iklan</span>
+            <span class="spec-val">Bebas Iklan · Open Source</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON TABLE AS IN DESAIN.MD -->
+    <section class="section" id="perbandingan">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">KOMPARASI</span>
+          <h2 class="section-title">Bandingkan dengan aplikasi streaming biasa.</h2>
+          <p class="section-desc">Mengapa pecinta film memilih YuuZPrime untuk pengalaman menonton yang bersih dan optimal.</p>
+        </div>
+
+        <div class="table-scroll-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          <span>Geser tabel ke samping untuk melihat detail komparasi</span>
+        </div>
+        <div class="compare-table-wrapper">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th class="col-feature">Fitur & Parameter</th>
+                <th class="col-other">Aplikasi Streaming Biasa</th>
+                <th class="col-valora">
+                  <div class="valora-header-pill">
+                    <img src="assets/icon.png" alt="Valora" class="mini-squircle">
+                    <span>YuuZPrime</span>
+                    <span class="badge-popular">Rekomendasi</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="col-feature"><strong>Biaya Akses / Berlangganan</strong></td>
+                <td class="col-other">Berlangganan bulanan / Biaya tersembunyi</td>
+                <td class="col-valora"><strong>Gratis 100% (Open Source)</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Iklan Pop-up & Banner</strong></td>
+                <td class="col-other text-danger">Banyak iklan mengganggu & redirect</td>
+                <td class="col-valora"><strong class="text-success">0 Iklan (Sama sekali tidak ada)</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Pelacak & SDK Iklan Pihak Ketiga</strong></td>
+                <td class="col-other">Dilengkapi analytics & ad trackers</td>
+                <td class="col-valora"><strong>0 Pelacak (Privat & Bersih)</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Dukungan Subtitle Eksternal (.srt/.vtt)</strong></td>
+                <td class="col-other">Terkunci / Tidak didukung</td>
+                <td class="col-valora"><strong>Didukung dengan sinkronisasi waktu</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Buka di Pemutar Eksternal (VLC/MPV)</strong></td>
+                <td class="col-other">Tidak diizinkan</td>
+                <td class="col-valora"><strong>Didukung penuh 1 ketukan</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Optimasi Buffer Awal</strong></td>
+                <td class="col-other">3000ms – 6000ms</td>
+                <td class="col-valora"><strong>800ms Startup Buffer Kilat</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Pembaruan In-App dengan Live Progress</strong></td>
+                <td class="col-other">Mengarahkan ke web iklan eksternal</td>
+                <td class="col-valora"><strong>Langsung di dalam aplikasi</strong></td>
+              </tr>
+              <tr>
+                <td class="col-feature"><strong>Arsitektur Biner</strong></td>
+                <td class="col-other">APK Universal besar (Overhead 32-bit)</td>
+                <td class="col-valora"><strong>Native ARM64-v8a murni</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALLATION STEPS -->
+    <section class="section bg-soft-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">PANDUAN CEPAT</span>
+          <h2 class="section-title">Hanya 3 langkah mudah untuk mulai menonton.</h2>
+          <p class="section-desc">Instalasi berkas APK resmi YuuZPrime di smartphone Android Anda.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-badge">1</div>
+            <h3 class="step-title">Unduh File APK Resmi.</h3>
+            <p class="step-text">
+              Klik tombol <strong>Unduh APK v1.0.3</strong> di halaman ini untuk mendapatkan file installer <code>YuuZPrime-arm64-v8a-v1.0.3.apk</code> langsung dari server rilis GitHub.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">2</div>
+            <h3 class="step-title">Izinkan Sumber Tidak Dikenal.</h3>
+            <p class="step-text">
+              Buka berkas di notifikasi atau File Manager. Jika Android meminta konfirmasi keamanan, aktifkan opsi <em>"Izinkan dari sumber ini"</em> (Install Unknown Apps).
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">3</div>
+            <h3 class="step-title">Buka & Nikmati Tontonan.</h3>
+            <p class="step-text">
+              Ketuk <strong>Install</strong> dan tunggu beberapa detik. Buka aplikasi YuuZPrime dan nikmati seluruh koleksi tontonan favorit Anda tanpa gangguan iklan.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS / COMMUNITY QUOTES -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">ULASAN KOMUNITAS</span>
+          <h2 class="section-title">Pendapat pengguna tentang YuuZPrime.</h2>
+          <p class="section-desc">Pengalaman nyata dari mereka yang menikmati tontonan film tanpa gangguan.</p>
+        </div>
+
+        <div class="testimonials-masonry">
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Akhirnya ada aplikasi streaming yang benar-benar bersih dari iklan judi dan pop-up link jebakan. Pemutarnya cepat sekali loading-nya."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar-squircle">RF</div>
+              <div class="author-info">
+                <span class="author-name">Rian Firmansyah</span>
+                <span class="author-meta">Pengguna Samsung Galaxy S23</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Fitur external subtitle dengan pengaturan delay milidetik sangat membantu saat nonton film Eropa atau drakor yang timing-nya agak bergeser."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar-squircle">DK</div>
+              <div class="author-info">
+                <span class="author-name">Dinda Kencana</span>
+                <span class="author-meta">Pengguna Xiaomi 13T</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Kompilasi ARM64-nya berasa banget, suhu HP adem saat nonton maraton 4 jam dan konsumsi baterai stabil. Top notch engineering."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar-squircle">AP</div>
+              <div class="author-info">
+                <span class="author-name">Arya Pratama</span>
+                <span class="author-meta">Android Developer & Cinephile</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">
+              "Dukungan lempar stream ke VLC player adalah game changer. Saya bisa gunakan fitur audio booster dan equalizer bawaan VLC sesuka hati."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar-squircle">BS</div>
+              <div class="author-info">
+                <span class="author-name">Bima Sakti</span>
+                <span class="author-meta">Pengguna Poco F5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION (ACCORDION) -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">PERTANYAAN UMUM</span>
+          <h2 class="section-title">Pertanyaan yang sering diajukan.</h2>
+          <p class="section-desc">Temukan jawaban seputar instalasi, kompatibilitas, dan keamanan aplikasi.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>HP apa saja yang kompatibel dengan versi ARM64-v8a?</span>
+              <span class="faq-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="faq-answer">
+              <p>Hampir seluruh smartphone Android modern keluaran tahun 2017 ke atas (Samsung, Xiaomi, Poco, Oppo, Vivo, Realme, Infinix, Google Pixel, OnePlus, dll.) menggunakan chipset 64-bit (ARM64-v8a) dengan OS Android 9 atau lebih baru.</p>
+            </div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Apakah YuuZPrime benar-benar gratis dan bebas iklan?</span>
+              <span class="faq-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="faq-answer">
+              <p>Ya, YuuZPrime dibangun sebagai proyek open-source tanpa modul monetisasi iklan pihak ketiga, tanpa pelacak analitik invasif, dan tanpa biaya langganan apapun.</p>
+            </div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Mengapa muncul peringatan "Install Unknown Apps" saat memasang APK?</span>
+              <span class="faq-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="faq-answer">
+              <p>Ini adalah prosedur standar keamanan Android untuk aplikasi apapun yang diunduh di luar Google Play Store. Berkas APK YuuZPrime ditandatangani secara digital (digitally signed) dan bebas dari malware berbahaya. Cukup pilih "Izinkan dari sumber ini" untuk melanjutkan.</p>
+            </div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Bagaimana cara memperbarui ke versi baru di masa mendatang?</span>
+              <span class="faq-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="faq-answer">
+              <p>YuuZPrime memiliki fitur <strong>In-App APK Updater</strong>. Saat rilis baru tersedia di GitHub, aplikasi akan menampilkan jendela dialog pembaruan dengan progress bar unduhan langsung di layar Anda.</p>
+            </div>
+          </div>
+
+          <div class="faq-row" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Apakah bisa memutar video menggunakan aplikasi pemutar eksternal?</span>
+              <span class="faq-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="faq-answer">
+              <p>Sangat bisa! Di halaman pemutar, Anda dapat memilih tombol "Buka di Pemutar Eksternal" untuk meneruskan tautan video ke aplikasi favorit Anda seperti VLC for Android, MPV, MX Player, atau Nova Video Player.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRE-FOOTER CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <span class="badge-popular">MULAI MENONTON</span>
+          <h2 class="cta-title">Siap menikmati film tanpa gangguan iklan?</h2>
+          <p class="cta-subtitle">Unduh YuuZPrime v1.0.3 resmi sekarang juga dan nikmati pemutaran sinematik di smartphone Android Anda.</p>
+          <div class="cta-actions">
+            <a href="https://github.com/B7ByteMe/valorafilm/releases/download/v1.0.3/YuuZPrime-arm64-v8a-v1.0.3.apk" class="button-primary cta-btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Unduh YuuZPrime v1.0.3</span>
+            </a>
+            <a href="https://github.com/B7ByteMe/valorafilm" target="_blank" rel="noopener" class="button-outline cta-btn-secondary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              <span>GitHub Repository ↗</span>
+            </a>
+          </div>
+          <div class="cta-footnote">
+            Terverifikasi aman · Bebas iklan · Diperbarui secara berkala di GitHub Releases.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- POLARITY INVERSION FOOTER (NEAR-BLACK FILL, ROUNDED TOP CORNERS) -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo-row">
+            <img src="assets/icon.png" alt="YuuZPrime" class="footer-squircle">
+            <span class="footer-wordmark">YuuZPrime.</span>
+          </div>
+          <p class="footer-tagline">
+            Aplikasi pemutar streaming sinematik bebas iklan untuk Android dengan performa native 64-bit dan kualitas 4K HDR.
+          </p>
+          <div class="footer-badge-pill">
+            <span class="badge-dot"></span>
+            <span>Status: Versi v1.0.3 Stabil & Aktif</span>
+          </div>
+        </div>
+
+        <div class="footer-links-grid">
+          <div class="footer-col">
+            <h4 class="footer-col-title">Navigasi</h4>
+            <ul class="footer-link-list">
+              <li><a href="#fitur">Fitur Utama</a></li>
+              <li><a href="#arsitektur">Arsitektur</a></li>
+              <li><a href="#spesifikasi">Spesifikasi</a></li>
+              <li><a href="#perbandingan">Bandingkan</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4 class="footer-col-title">Rilis & Unduhan</h4>
+            <ul class="footer-link-list">
+              <li><a href="https://github.com/B7ByteMe/valorafilm/releases/download/v1.0.3/YuuZPrime-arm64-v8a-v1.0.3.apk">Unduh APK (v1.0.3)</a></li>
+              <li><a href="https://github.com/B7ByteMe/valorafilm/releases/tag/v1.0.3" target="_blank" rel="noopener">Catatan Rilis v1.0.3</a></li>
+              <li><a href="https://github.com/B7ByteMe/valorafilm/releases" target="_blank" rel="noopener">Semua Versi Rilis</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4 class="footer-col-title">Komunitas & Kode</h4>
+            <ul class="footer-link-list">
+              <li><a href="https://github.com/B7ByteMe/valorafilm" target="_blank" rel="noopener">Repository GitHub</a></li>
+              <li><a href="https://github.com/B7ByteMe/valorafilm/issues" target="_blank" rel="noopener">Laporkan Kendala / Bug</a></li>
+              <li><a href="https://github.com/B7ByteMe/valorafilm/blob/main/LICENSE" target="_blank" rel="noopener">Lisensi Open Source</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 YuuZPrime. Hak cipta dilindungi undang-undang. Dirancang dengan prinsip kesederhanaan galeri monochrome.</p>
+        <div class="footer-bottom-badges">
+          <span class="footer-pill-tag">ARM64-v8a</span>
+          <span class="footer-pill-tag">Zero Ads</span>
+          <span class="footer-pill-tag">ExoPlayer Engine</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

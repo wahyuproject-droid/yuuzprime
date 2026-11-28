@@ -1,0 +1,380 @@
+import React, {useState} from 'react';
+import {
+  View,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+  Image,
+  Linking,
+  ToastAndroid,
+  Platform,
+  StatusBar,
+  StyleSheet,
+} from 'react-native';
+import * as Application from 'expo-application';
+import Constants from 'expo-constants';
+import {Ionicons} from '@expo/vector-icons';
+import {useNavigation} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import AppText from '../../components/ui/Text';
+import AmbientBackground from '../../components/ui/AmbientBackground';
+import {useM3Colors} from '../../theme/M3PaletteContext';
+
+const InfoRow = ({label, value}: {label: string; value: string}) => {
+  const colors = useM3Colors();
+  return (
+    <View style={styles.infoRow}>
+      <AppText style={[styles.infoLabel, {color: colors.onSurfaceVariant}]}>
+        {label}
+      </AppText>
+      <AppText style={[styles.infoValue, {color: colors.onSurface}]}>
+        {value}
+      </AppText>
+    </View>
+  );
+};
+
+const LinkRow = ({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  onPress: () => void;
+}) => {
+  const colors = useM3Colors();
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={onPress}
+      style={styles.linkRow}>
+      <View style={styles.linkLeft}>
+        <View
+          style={[
+            styles.iconContainer,
+            {
+              backgroundColor: colors.primaryContainer,
+              borderColor: `${colors.primary}40`,
+            },
+          ]}>
+          <Ionicons name={icon} size={20} color={colors.primary} />
+        </View>
+        <AppText style={[styles.linkLabel, {color: colors.onSurface}]}>
+          {label}
+        </AppText>
+      </View>
+      <Ionicons name="arrow-forward" size={18} color={colors.onSurfaceVariant} />
+    </TouchableOpacity>
+  );
+};
+
+const Divider = () => {
+  const colors = useM3Colors();
+  return (
+    <View
+      style={[
+        styles.divider,
+        {
+          backgroundColor: colors.outlineVariant
+            ? `${colors.outlineVariant}50`
+            : 'rgba(255,255,255,0.08)',
+        },
+      ]}
+    />
+  );
+};
+
+const About = () => {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const colors = useM3Colors();
+  const [logoTapCount, setLogoTapCount] = useState(0);
+
+  const appVersion =
+    Application.nativeApplicationVersion ||
+    Constants.expoConfig?.version ||
+    '1.0.5';
+  const packageName =
+    Application.applicationId ||
+    Constants.expoConfig?.android?.package ||
+    'com.yuuzprime';
+  const buildType = __DEV__ ? 'Debug' : 'Release';
+
+  const handleLogoTap = () => {
+    const next = logoTapCount + 1;
+    setLogoTapCount(next);
+    if (next >= 7) {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('YuuZPrime • YuuZGilakPrompt', ToastAndroid.SHORT);
+      }
+      setLogoTapCount(0);
+    }
+  };
+
+  return (
+    <AmbientBackground>
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+
+        {/* Top App Bar */}
+        <View
+          style={[
+            styles.header,
+            {
+              paddingTop:
+                Platform.OS === 'android'
+                  ? (StatusBar.currentHeight || 20) + 10
+                  : insets.top + 10,
+            },
+          ]}>
+          <Pressable
+            onPress={() => navigation.goBack()}
+            hitSlop={12}
+            style={({pressed}) => [
+              styles.backButton,
+              {opacity: pressed ? 0.6 : 1},
+            ]}>
+            <Ionicons name="arrow-back" size={26} color={colors.onSurface} />
+          </Pressable>
+          <AppText style={[styles.headerTitle, {color: colors.onSurface}]}>
+            Credit & Informasi
+          </AppText>
+          <View style={styles.headerRightPlaceholder} />
+        </View>
+
+        {/* Scrollable Content */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}>
+          {/* App Hero Section */}
+          <View style={styles.heroSection}>
+            <Pressable
+              onPress={handleLogoTap}
+              style={styles.logoWrapper}>
+              <Image
+                source={require('../../../assets/icon_transparent.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </Pressable>
+
+            <AppText style={[styles.appName, {color: colors.onSurface}]}>
+              YuuZPrime
+            </AppText>
+            <AppText
+              style={[styles.appTagline, {color: colors.onSurfaceVariant}]}>
+              Film · Serial · Anime
+            </AppText>
+
+            <View
+              style={[
+                styles.versionBadge,
+                {
+                  backgroundColor: colors.primaryContainer,
+                  borderColor: `${colors.primary}60`,
+                },
+              ]}>
+              <AppText
+                style={[styles.versionBadgeText, {color: colors.primary}]}>
+                v{appVersion}
+              </AppText>
+            </View>
+          </View>
+
+          {/* Info Card */}
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.surfaceContainer,
+                borderColor: `${colors.outlineVariant}60`,
+              },
+            ]}>
+            <InfoRow label="Developer modifikasi" value="YuuZGilakPrompt" />
+            <Divider />
+            <InfoRow label="Version" value={appVersion} />
+            <Divider />
+            <InfoRow label="Build" value={buildType} />
+            <Divider />
+            <InfoRow label="Package" value={packageName} />
+          </View>
+
+          {/* Section Label: LINKS */}
+          <AppText style={[styles.sectionHeader, {color: colors.primary}]}>
+            YUUZPRIME
+          </AppText>
+
+          {/* Links Card */}
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.surfaceContainer,
+                borderColor: `${colors.outlineVariant}60`,
+              },
+            ]}>
+            <LinkRow
+              icon="globe-outline"
+              label="GitHub YuuZPrime"
+              onPress={() => Linking.openURL('https://github.com/wahyuproject-droid/yuuzprime')}
+            />
+            <Divider />
+            <LinkRow
+              icon="heart-outline"
+              label="Dukung via SociaBuzz"
+              onPress={() => Linking.openURL('https://sociabuzz.com/yuuzdisini')}
+            />
+          </View>
+
+          <AppText style={[styles.sectionHeader, {color: colors.primary}]}>ATRIBUSI & LISENSI</AppText>
+          <View style={[styles.card, {backgroundColor: colors.surfaceContainer, borderColor: `${colors.outlineVariant}60` }]}>
+            <InfoRow label="Source asli" value="Valora · Zyxone" />
+            <Divider />
+            <LinkRow icon="document-text-outline" label="Apache License 2.0" onPress={() => Linking.openURL('https://www.apache.org/licenses/LICENSE-2.0')} />
+            <Divider />
+            <LinkRow icon="code-slash-outline" label="Proyek upstream" onPress={() => Linking.openURL('https://github.com/B7ByteMe/valorafilm')} />
+            <Divider />
+            <LinkRow icon="information-circle-outline" label="Metadata & poster TMDB" onPress={() => Linking.openURL('https://www.themoviedb.org/')} />
+            <AppText style={{color: colors.onSurfaceVariant, fontSize: 12, paddingVertical: 12}}>This product uses the TMDB API but is not endorsed or certified by TMDB. YuuZPrime adalah modifikasi independen, bukan rilis resmi upstream.</AppText>
+          </View>
+          <View style={{height: 40}} />
+        </ScrollView>
+      </View>
+    </AmbientBackground>
+  );
+};
+
+export default About;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  headerRightPlaceholder: {
+    width: 40,
+  },
+  scrollContent: {
+    paddingHorizontal: 18,
+    paddingTop: 12,
+    paddingBottom: 40,
+  },
+  heroSection: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  logoWrapper: {
+    width: 90,
+    height: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  logoImage: {
+    width: 84,
+    height: 84,
+  },
+  appName: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    letterSpacing: 0.3,
+  },
+  appTagline: {
+    fontSize: 14,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  versionBadge: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginTop: 14,
+  },
+  versionBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  card: {
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 18,
+    paddingVertical: 6,
+    marginBottom: 8,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  infoLabel: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  infoValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    flexShrink: 1,
+    textAlign: 'right',
+    marginLeft: 10,
+  },
+  divider: {
+    height: 1,
+  },
+  sectionHeader: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 4,
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  linkLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  iconContainer: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  linkLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
