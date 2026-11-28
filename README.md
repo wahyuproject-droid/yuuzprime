@@ -1,9 +1,10 @@
 # YuuZPrime
-Android adaptation of the TMDB metadata catalog functionality in the supplied TMDB-To-VOD-Playlist project by gogetta69. Android adaptation and branding: YuuZGilakPrompt.
+Android adaptation and branding by YuuZGilakPrompt. Original source: TMDB-To-VOD-Playlist by gogetta69, CC BY-NC 4.0 (attribution retained).
 
-Movies: now playing, popular, genres. TV: on the air, popular, top rated, genres. Search and pagination use TMDB metadata; configure your own TMDB v3 API key in the app. Adult entries are excluded. Local video playback uses Android's document picker. The upstream PHP/Node backend, third-party streaming extraction, provider lists, proxies, bundled Windows executables and adult modules are not included. This is not a full port of the upstream project. No remote movie playback is supplied.
+## Structure
+- `backend/`: original PHP/Node.js source after removing the dedicated adult-content module, matching the supplied cleaned archive (114 verified files). The one-time import runs in GitHub Actions. It does not execute upstream binaries or start a streaming server.
+- `app/`: standalone Android catalog and local-video client. Requires a TMDB v3 API key. Does not bundle or run the PHP/Node backend, and does not provide remote movie playback.
+- `download/`: static download website, linking to the latest verified GitHub Release.
+- `.github/workflows/build-apk.yml`: build, verify, and publish the signed testing APK.
 
-## APK
-Open Actions > Build YuuZPrime APK. Download YuuZPrime-APK from Artifacts after a successful run. The debug signing key is for testing only.
-
-Upstream attribution: gogetta69, TMDB-To-VOD-Playlist. Adaptation retains CC BY-NC 4.0; see LICENSE.md. This product uses the TMDB API but is not endorsed or certified by TMDB. No full Android build or device test was performed before upload.
+The backend requires its own server and setup. Use only authorized content. No external provider playback or device test has been performed. Public APK is for testing; use a secure private signing key for production. This product uses the TMDB API but is not endorsed or certified by TMDB.

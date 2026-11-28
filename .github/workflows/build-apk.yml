@@ -6,11 +6,40 @@ on:
 permissions:
   contents: read
 jobs:
+  import-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      ref: ${{ steps.import.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Import verified original backend
+        id: import
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -d backend ]; then
+            python3 scripts/import_backend.py
+            git add -f -- backend
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Import 114 verified sanitized upstream source files'
+            git push origin HEAD:refs/heads/main
+          fi
+          echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build:
+    needs: import-source
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.import-source.outputs.ref }}
+          persist-credentials: false
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -35,3 +64,17 @@ jobs:
           name: YuuZPrime-APK
           path: apk-output/YuuZPrime.apk
           if-no-files-found: error
+
+      - name: Publish verified testing APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd apk-output
+          sha256sum YuuZPrime.apk > YuuZPrime.apk.sha256
+          tag="android-v1.0.0-build-${GITHUB_RUN_NUMBER}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" YuuZPrime.apk YuuZPrime.apk.sha256 --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" YuuZPrime.apk YuuZPrime.apk.sha256 --target "${{ needs.import-source.outputs.ref }}" --title "YuuZPrime Android · Build ${GITHUB_RUN_NUMBER}" --notes "Testing APK: TMDB catalog and local video playback. Original cleaned PHP/Node source is separate; the backend is not embedded in the APK." --latest --repo "$GITHUB_REPOSITORY"
+          fi
